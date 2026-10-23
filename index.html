@@ -15,67 +15,30 @@ body {
   display: grid;
   place-items: center;
   background: var(--cream);
+}
+h1 {
+  margin: 0;
   color: var(--cream);
   font-family: 'Damion', cursive;
+  font-weight: 400;
   font-size: min(300px, 27vw);
-  /* closes hairline notches (top of the s) where the shadow would peek through */
-  -webkit-text-stroke: 0.015em var(--cream);
-  /* solid extruded shadow down and to the right, one layer per step */
-  text-shadow:
-    0.003em 0.0024em 0 var(--red),
-    0.006em 0.0048em 0 var(--red),
-    0.009em 0.0072em 0 var(--red),
-    0.012em 0.0096em 0 var(--red),
-    0.015em 0.0120em 0 var(--red),
-    0.018em 0.0144em 0 var(--red),
-    0.021em 0.0168em 0 var(--red),
-    0.024em 0.0192em 0 var(--red),
-    0.027em 0.0216em 0 var(--red),
-    0.030em 0.0240em 0 var(--red),
-    0.033em 0.0264em 0 var(--red),
-    0.036em 0.0288em 0 var(--red),
-    0.039em 0.0312em 0 var(--red),
-    0.042em 0.0336em 0 var(--red),
-    0.045em 0.0360em 0 var(--red),
-    0.048em 0.0384em 0 var(--red),
-    0.051em 0.0408em 0 var(--red),
-    0.054em 0.0432em 0 var(--red),
-    0.057em 0.0456em 0 var(--red),
-    0.060em 0.0480em 0 var(--red),
-    0.063em 0.0504em 0 var(--red),
-    0.066em 0.0528em 0 var(--red),
-    0.069em 0.0552em 0 var(--red),
-    0.072em 0.0576em 0 var(--red),
-    0.075em 0.0600em 0 var(--red),
-    0.078em 0.0624em 0 var(--red),
-    0.081em 0.0648em 0 var(--red),
-    0.084em 0.0672em 0 var(--red),
-    0.087em 0.0696em 0 var(--red),
-    0.090em 0.0720em 0 var(--red),
-    0.093em 0.0744em 0 var(--red),
-    0.096em 0.0768em 0 var(--red),
-    0.099em 0.0792em 0 var(--red),
-    0.102em 0.0816em 0 var(--red),
-    0.105em 0.0840em 0 var(--red),
-    0.108em 0.0864em 0 var(--red),
-    0.111em 0.0888em 0 var(--red),
-    0.114em 0.0912em 0 var(--red),
-    0.117em 0.0936em 0 var(--red),
-    0.120em 0.0960em 0 var(--red),
-    0.123em 0.0984em 0 var(--red),
-    0.126em 0.1008em 0 var(--red),
-    0.129em 0.1032em 0 var(--red),
-    0.132em 0.1056em 0 var(--red),
-    0.135em 0.1080em 0 var(--red),
-    0.138em 0.1104em 0 var(--red),
-    0.141em 0.1128em 0 var(--red),
-    0.144em 0.1152em 0 var(--red),
-    0.147em 0.1176em 0 var(--red),
-    0.150em 0.1200em 0 var(--red);
+  /* red outline; drawn behind the fill so only its outer half shows */
+  -webkit-text-stroke: 0.035em var(--red);
+  paint-order: stroke fill;
+  /* solid extrusion down and to the right, cast from the outlined letters.
+     Each drop-shadow copies everything before it, so offsets of 1, 2, 4 … 32
+     steps add up to one continuous 63-step block. */
+  filter:
+    drop-shadow(0.0025em 0.002em 0 var(--red))
+    drop-shadow(0.005em 0.004em 0 var(--red))
+    drop-shadow(0.01em 0.008em 0 var(--red))
+    drop-shadow(0.02em 0.016em 0 var(--red))
+    drop-shadow(0.04em 0.032em 0 var(--red))
+    drop-shadow(0.08em 0.064em 0 var(--red));
 }
 </style>
 </head>
 <body>
-Mascot
+<h1>Mascot</h1>
 </body>
 </html>
