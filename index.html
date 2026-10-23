@@ -18,6 +18,8 @@ body {
   color: var(--cream);
   font-family: 'Damion', cursive;
   font-size: min(300px, 27vw);
+  /* closes hairline notches (top of the s) where the shadow would peek through */
+  -webkit-text-stroke: 0.015em var(--cream);
   /* solid extruded shadow down and to the right, one layer per step */
   text-shadow:
     0.003em 0.0024em 0 var(--red),
