@@ -18,6 +18,9 @@ body {
 }
 h1 {
   margin: 0;
+  /* the script's overhangs (the t's crossbar) reach past the text box; padding keeps
+     them inside the filter region, which Safari clips to */
+  padding: 0.1em 0.15em;
   color: var(--cream);
   font-family: 'Damion', cursive;
   font-weight: 400;
@@ -45,7 +48,7 @@ h1 {
 <!-- morphological closing: grow the letter silhouette 3px, shrink it back, and paint
      whatever got filled in red beneath the letters -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
-  <filter id="close" x="-5%" y="-5%" width="110%" height="110%" color-interpolation-filters="sRGB">
+  <filter id="close" x="-25%" y="-25%" width="150%" height="150%" color-interpolation-filters="sRGB">
     <feMorphology in="SourceAlpha" operator="dilate" radius="3" result="grown"/>
     <feMorphology in="grown" operator="erode" radius="3" result="closed"/>
     <feFlood flood-color="#F9033D"/>
