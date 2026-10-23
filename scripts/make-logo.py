@@ -1,6 +1,11 @@
 """Build the Mascot logo as two SVG paths: a red silhouette (outline + extrusion)
-and the cream letters on top. Usage: make_logo.py FONT.ttf OUT.svg"""
-import sys
+and the cream letters on top.
+
+    make-logo.py Damion-Regular.ttf logo.svg                      # wordmark for index.html
+    make-logo.py Damion-Regular.ttf favicon.svg --text M --square \\
+        --red '#F9033D' --cream '#FEFBF6'                           # icon
+"""
+import argparse
 import uharfbuzz as hb
 from fontTools.ttLib import TTFont
 from fontTools.pens.basePen import BasePen
@@ -9,8 +14,16 @@ from shapely.geometry import Polygon, LinearRing
 from shapely.ops import unary_union
 from shapely import affinity
 
-FONT, OUT = sys.argv[1], sys.argv[2]
-TEXT = "Mascot"
+args = argparse.ArgumentParser()
+args.add_argument("font")
+args.add_argument("out")
+args.add_argument("--text", default="Mascot")
+args.add_argument("--square", action="store_true", help="pad the viewBox to a square")
+args.add_argument("--bg", help="fill the viewBox with this color (for opaque icons)")
+args.add_argument("--red", default="var(--red)")
+args.add_argument("--cream", default="var(--cream)")
+args = args.parse_args()
+FONT, OUT, TEXT = args.font, args.out, args.text
 EM = 1000.0                 # output units per em
 CLOSE = 0.012 * EM          # morphological closing radius (fills the s notch)
 OUTLINE = 0.0175 * EM       # visible outline width (outer half of the old 0.035em stroke)
@@ -95,8 +108,12 @@ red = unary_union(pieces).simplify(0.4)
 cream = letters.simplify(0.4)
 
 minx, miny, maxx, maxy = red.bounds
-pad = 0.02 * EM
-vb = (minx - pad, -(maxy + pad), (maxx - minx) + 2 * pad, (maxy - miny) + 2 * pad)
+w, h = maxx - minx, maxy - miny
+pad = 0.12 * max(w, h) if args.bg else 0.02 * EM    # breathing room on an opaque tile
+vb = (minx - pad, -(maxy + pad), w + 2 * pad, h + 2 * pad)
+if args.square:
+    side = max(vb[2], vb[3])
+    vb = (vb[0] - (side - vb[2]) / 2, vb[1] - (side - vb[3]) / 2, side, side)
 
 
 def to_d(geom):
@@ -108,10 +125,13 @@ def to_d(geom):
     return "".join(out)
 
 
-svg = (f'<svg viewBox="{vb[0]:.1f} {vb[1]:.1f} {vb[2]:.1f} {vb[3]:.1f}" '
-       f'role="img" aria-label="{TEXT}">'
-       f'<path fill="var(--red)" fill-rule="evenodd" d="{to_d(red)}"/>'
-       f'<path fill="var(--cream)" fill-rule="evenodd" d="{to_d(cream)}"/>'
+bg = (f'<rect x="{vb[0]:.1f}" y="{vb[1]:.1f}" width="{vb[2]:.1f}" height="{vb[3]:.1f}" '
+      f'style="fill:{args.bg}"/>') if args.bg else ""
+svg = (f'<svg xmlns="http://www.w3.org/2000/svg" '
+       f'viewBox="{vb[0]:.1f} {vb[1]:.1f} {vb[2]:.1f} {vb[3]:.1f}" '
+       f'role="img" aria-label="{TEXT}">{bg}'
+       f'<path style="fill:{args.red}" fill-rule="evenodd" d="{to_d(red)}"/>'
+       f'<path style="fill:{args.cream}" fill-rule="evenodd" d="{to_d(cream)}"/>'
        f'</svg>')
 open(OUT, "w").write(svg)
 print(f"upem={upem} glyphs={len(glyph_shapes)} viewBox_em=({vb[2]/EM:.3f} x {vb[3]/EM:.3f}) bytes={len(svg)}")
