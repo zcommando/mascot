@@ -25,10 +25,12 @@ h1 {
   /* red outline; drawn behind the fill so only its outer half shows */
   -webkit-text-stroke: 0.035em var(--red);
   paint-order: stroke fill;
-  /* solid extrusion down and to the right, cast from the outlined letters.
+  /* #close fills hairline gaps (the notch atop the s) before the extrusion is cast.
+     Solid extrusion down and to the right, cast from the outlined letters.
      Each drop-shadow copies everything before it, so offsets of 1, 2, 4 … 32
      steps add up to one continuous 63-step block. */
   filter:
+    url(#close)
     drop-shadow(0.0025em 0.002em 0 var(--red))
     drop-shadow(0.005em 0.004em 0 var(--red))
     drop-shadow(0.01em 0.008em 0 var(--red))
@@ -40,5 +42,16 @@ h1 {
 </head>
 <body>
 <h1>Mascot</h1>
+<!-- morphological closing: grow the letter silhouette 3px, shrink it back, and paint
+     whatever got filled in red beneath the letters -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="close" x="-5%" y="-5%" width="110%" height="110%" color-interpolation-filters="sRGB">
+    <feMorphology in="SourceAlpha" operator="dilate" radius="3" result="grown"/>
+    <feMorphology in="grown" operator="erode" radius="3" result="closed"/>
+    <feFlood flood-color="#F9033D"/>
+    <feComposite in2="closed" operator="in" result="fill"/>
+    <feMerge><feMergeNode in="fill"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+</svg>
 </body>
 </html>
